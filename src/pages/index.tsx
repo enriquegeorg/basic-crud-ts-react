@@ -1,23 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import ClientColection from "../../firebase/db/ClientColection";
 
-import Button from "../components/Button.tsx";
-import Form from "../components/Form.tsx";
-import Layout from "../components/Layout.tsx";
-import Table from "../components/Table.tsx";
-import Client from "../core/Client.ts";
+import Button from "../components/Button";
+import Form from "../components/Form";
+import Layout from "../components/Layout";
+import Table from "../components/Table";
+import Client from "../core/Client";
+import ClientRepository from "../core/ClientRepository";
 
-const clients = [
-  new Client("1", "Ana", 34),
-  new Client("2", "Bia", 30),
-  new Client("3", "Julia", 27),
-  new Client("4", "Anderson", 11),
-  new Client("5", "Fabio", 50),
-];
+const clients = [];
 
 export default function Home() {
+  const repo: ClientRepository = new ClientColection();
 
   const [client, setClient] = useState<Client>(Client.void());
+  const [clientsList, setClientsList] = useState<Client[]>([]);
   const [changeView, setChangeView] = useState<"table" | "form">("table");
+
+  useEffect(getAll, [])
+
+  function getAll() {
+    repo.getAll().then(clients => {
+      setClientsList(clients)
+      setChangeView('table')
+    });
+  }
 
   function selectedClient(client: Client) {
     setClient(client);
@@ -28,14 +35,15 @@ export default function Home() {
     console.log(client.name);
   }
 
-  function saveClient(client: Client) {
-    console.log(client);
-    setChangeView('table')
+  async function saveClient(client: Client) {
+    await repo.save(client);
+    setChangeView("table");
+    getAll()
   }
 
   function newClient() {
     setClient(Client.void());
-    setChangeView('form')
+    setChangeView("form");
   }
 
   return (
@@ -50,9 +58,7 @@ export default function Home() {
         {changeView === "table" ? (
           <>
             <div className="flex justify-end">
-              <Button 
-              color="yellow" 
-              onClick={newClient}>
+              <Button color="green" onClick={newClient}>
                 Novo cliente
               </Button>
             </div>
