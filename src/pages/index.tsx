@@ -17,12 +17,12 @@ export default function Home() {
   const [clientsList, setClientsList] = useState<Client[]>([]);
   const [changeView, setChangeView] = useState<"table" | "form">("table");
 
-  useEffect(getAll, [])
+  useEffect(getAll, []);
 
   function getAll() {
-    repo.getAll().then(clients => {
-      setClientsList(clients)
-      setChangeView('table')
+    repo.getAll().then((clients) => {
+      setClientsList(clients);
+      setChangeView("table");
     });
   }
 
@@ -38,7 +38,7 @@ export default function Home() {
   async function saveClient(client: Client) {
     await repo.save(client);
     setChangeView("table");
-    getAll()
+    getAll();
   }
 
   function newClient() {
@@ -63,7 +63,7 @@ export default function Home() {
               </Button>
             </div>
             <Table
-              clients={clients}
+              clients={clientsList}
               selectedClient={selectedClient}
               removedClient={removedClient}
             />
