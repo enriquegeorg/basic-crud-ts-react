@@ -1,50 +1,21 @@
-import React, { useEffect, useState } from "react";
-import ClientColection from "../../firebase/db/ClientColection";
-
 import Button from "../components/Button";
 import Form from "../components/Form";
 import Layout from "../components/Layout";
 import Table from "../components/Table";
-import Client from "../core/Client";
-import ClientRepository from "../core/ClientRepository";
+import useClients from "../hooks/useClients";
 
-const clients = [];
 
 export default function Home() {
-  const repo: ClientRepository = new ClientColection();
-
-  const [client, setClient] = useState<Client>(Client.void());
-  const [clientsList, setClientsList] = useState<Client[]>([]);
-  const [changeView, setChangeView] = useState<"table" | "form">("table");
-
-  useEffect(getAll, []);
-
-  function getAll() {
-    repo.getAll().then((clients) => {
-      setClientsList(clients);
-      setChangeView("table");
-    });
-  }
-
-  function selectedClient(client: Client) {
-    setClient(client);
-    setChangeView("form");
-  }
-
-  function removedClient(client: Client) {
-    console.log(client.name);
-  }
-
-  async function saveClient(client: Client) {
-    await repo.save(client);
-    setChangeView("table");
-    getAll();
-  }
-
-  function newClient() {
-    setClient(Client.void());
-    setChangeView("form");
-  }
+  const {
+    newClient,
+    selectedClient,
+    removedClient,
+    saveClient,
+    client,
+    clientsList,
+    table,
+    changeToTable,
+  } = useClients();
 
   return (
     <div
@@ -55,7 +26,7 @@ export default function Home() {
     `}
     >
       <Layout title="Cadastro simples">
-        {changeView === "table" ? (
+        {table ? (
           <>
             <div className="flex justify-end">
               <Button color="green" onClick={newClient}>
@@ -71,7 +42,7 @@ export default function Home() {
         ) : (
           <Form
             client={client}
-            cancel={() => setChangeView("table")}
+            cancel={changeToTable}
             changeClient={saveClient}
           />
         )}
