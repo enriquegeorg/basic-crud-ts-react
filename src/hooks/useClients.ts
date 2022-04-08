@@ -17,13 +17,13 @@ export default function useClients() {
   function getAll() {
     repo.getAll().then((clients) => {
       setClientsList(clients);
-      changeToTable
+      changeToTable()
     });
   }
 
   function selectedClient(client: Client) {
     setClient(client);
-    changeToForm
+    changeToForm()
   }
 
   async function removedClient(client: Client) {
@@ -39,7 +39,7 @@ export default function useClients() {
 
   function newClient() {
     setClient(Client.void());
-    changeToForm
+    changeToForm()
   }
 
   return {
